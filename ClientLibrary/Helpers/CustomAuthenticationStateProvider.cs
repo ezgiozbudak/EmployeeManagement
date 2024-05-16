@@ -11,14 +11,20 @@ using System.Threading.Tasks;
 
 namespace ClientLibrary.Helpers
 {
-    public class CustomAuthenticationStateProvider(LocalStorageService localStorageService) : AuthenticationStateProvider
+    public class CustomAuthenticationStateProvider : AuthenticationStateProvider
      {
         private readonly ClaimsPrincipal anonymous = new(new ClaimsIdentity());
+        private readonly LocalStorageService _localStorageService;
+
+        public CustomAuthenticationStateProvider(LocalStorageService localStorageService)
+        {
+            _localStorageService = localStorageService;
+        }
 
 
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
         {
-            var stringToken = await localStorageService.GetToken();
+            var stringToken = await _localStorageService.GetToken();
             if (string.IsNullOrEmpty(stringToken)) return await Task.FromResult(new AuthenticationState(anonymous));
 
             var deserializeToken = Serializations.DeserializeJsonString<UserSession>(stringToken);
@@ -37,13 +43,13 @@ namespace ClientLibrary.Helpers
             if(userSession.Token != null || userSession.RefreshToken != null) 
             {
                 var serializeSession = Serializations.SerializeObj(userSession);
-                await localStorageService.SetToken(serializeSession);
+                await _localStorageService.SetToken(serializeSession);
                 var getUserClaims = DecryptToken(userSession.Token!);
                 claimsPrincipal = SetClaimPrincipal(getUserClaims);
             }
             else
             {
-                await localStorageService.RemoveToken();
+                await _localStorageService.RemoveToken();
             }
             NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(claimsPrincipal)));
         }

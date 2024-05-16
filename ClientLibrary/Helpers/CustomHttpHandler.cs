@@ -1,6 +1,7 @@
 ﻿
 using Base.DTOs;
 using ClientLibrary.Services.Contracts;
+using System.Net;
 
 namespace ClientLibrary.Helpers
 {
@@ -16,7 +17,7 @@ namespace ClientLibrary.Helpers
             if (loginUrl || registerUrl || refreshTokenUrl) return await base.SendAsync(request, cancellationToken);
             
             var result = await base.SendAsync(request, cancellationToken);
-            if (result.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+            if (result.StatusCode == HttpStatusCode.Unauthorized)
             {
                 var stringToken = await localStorageService.GetToken();
                 if (stringToken == null) return result;

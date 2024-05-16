@@ -11,13 +11,18 @@ namespace Server.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [AllowAnonymous]
-    public class AuthenticationController(IUserAccount accountInterface) : ControllerBase
+    public class AuthenticationController : ControllerBase
     {
+        private readonly IUserAccount _accountInterface; 
+        public AuthenticationController(IUserAccount accountInterface)
+        {
+            _accountInterface = accountInterface; 
+        }
         [HttpPost("register")]
         public async Task<IActionResult> CreateAsync(Register user)
         {
             if (user == null) return BadRequest("Model is empty");
-            var result = await accountInterface.CreateAsync(user);
+            var result = await _accountInterface.CreateAsync(user);
             return Ok(result);
         }
 
@@ -25,7 +30,7 @@ namespace Server.Controllers
         public async Task<IActionResult> SignInAsync(Login user)
         {
             if (user == null) return BadRequest("Model is empty");
-            var result = await accountInterface.SignInAsync(user);
+            var result = await _accountInterface.SignInAsync(user);
             return Ok(result);
         }
 
@@ -33,7 +38,7 @@ namespace Server.Controllers
         public async Task<IActionResult> RefreshTokenAsync(RefreshToken token)
         {
             if (token == null) return BadRequest("Model is empty");
-            var result = await accountInterface.RefreshTokenAsync(token);   
+            var result = await _accountInterface.RefreshTokenAsync(token);   
             return Ok(result);
         }
     }
