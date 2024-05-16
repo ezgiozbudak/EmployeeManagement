@@ -1,5 +1,7 @@
 ﻿@page "/identity/account/register"
+@using Syncfusion.Blazor.Popups
 @layout AuthenticationLayout
+@inject SfDialogService DialogService
 <div class="container"> 
     <div class="row">
         <div class="col-lg-4"></div>
@@ -71,13 +73,19 @@
         var result = await accountService.CreateAsync(User);
         if(result.Flag)
         {
+            await DisplayDialog(result.Message,"Success");
             User = new();
         }
         else
         {
-
+            await DisplayDialog(result.Message,"Alert");
         }
         ShowLoadingButton = false;
+    }
+
+    private async Task DisplayDialog(string content, string title)
+    {
+        await DialogService.AlertAsync(content,title);
     }
 
 }

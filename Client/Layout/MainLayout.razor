@@ -11,10 +11,7 @@
               <Authorized>
                     <a class="btn btn-none text-danger" @onclick="LogoutClicked">Logout</a>
               </Authorized>
-              <NotAuthorized>
-                    <a class="btn btn-none" href="identity/account/login">Login</a>
-                    <a class="btn btn-none" href="identity/account/register">Register</a>
-              </NotAuthorized>
+       
             
                
           </AuthorizeView>
@@ -25,6 +22,8 @@
         </article>
     </main>
 </div>
+
+<Syncfusion.Blazor.Popups.SfDialogProvider/>
 
 @code{
     async Task LogoutClicked()
